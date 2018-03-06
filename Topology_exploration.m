@@ -3,15 +3,15 @@
 % Load structural matrix
 clear; clc; 
 addpath('/Users/RChenLab/Documents/TVB_Distribution/demo_scripts/Github/ThalCorProject/BCT/BCT/2017_01_15_BCT')
-Data=load('FC_without_thal.mat')
-net=Data.data_struct;
+SC_Data=load('data_struct.mat')
+net=SC_Data.data_struct;
 % if you want to get rid of negative weights
-net(net<0)=0  % should we remove negative weights? Shine did not
+%net(net<0)=0  % should we remove negative weights? Shine did not
 %imagesc(net)
 figure
 
 %% thresholding 
-net=threshold_proportional(net, 0.90) % see Hwang, tried 0.1 to 0.15 and averaged the result
+%net=threshold_proportional(net, 0.90) % see Hwang, tried 0.1 to 0.15 and averaged the result
 
 %% degre measure 
 [id,od,deg] = degrees_dir(net)

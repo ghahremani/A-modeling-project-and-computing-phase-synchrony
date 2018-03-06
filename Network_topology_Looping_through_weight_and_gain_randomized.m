@@ -3,7 +3,7 @@
 clear; clc; 
 addpath('/Users/RChenLab/Documents/TVB_Distribution/demo_scripts/Github/ThalCorProject/BCT/BCT/2017_01_15_BCT')
 Integ_within=[];Rand=-1;
-for Index=1:4
+for Index=1:10
     Rand=Rand+1;
     count_two=0;
     for gain={'0.0', '0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.8', '1','1.5','2.0'}
@@ -146,9 +146,9 @@ title('clustering coefficient')
 subplot(1,6,5)
 imagesc(weight,gain,mean(CORR,3))
 title('SC FC correlation')
-subplot(1,6,6)
+subplot(1,6,3)
 imagesc(weight,gain,mean(GE,3))
-title('efficienct_wei')
+title('GE')
 %% Line plot at g=0.4
 figure
 subplot(1,5,1)
@@ -176,16 +176,18 @@ errorbar(weight,R(5,:),SD(5,:),'r')
 title('SC FC correlation')
 axis([0 2 0.34 0.43])
 subplot(1,5,3)
-R=mean(Integ_within,3);
-SD=sqrt(var(Integ_within,0,3));
+R=mean(GE,3);
+SD=sqrt(var(GE,0,3));
 errorbar(weight,R(5,:),SD(5,:),'r')
-title('Within-module degree')
+title('GE')
+axis([0 2 -0.13 0])
 
 
 %% comparing thalamic nodes to other nodes in terms of PC and within-module degree
 figure
 subplot(1,2,1)
-plot(weight,Thal_PC(5,:),'b',weight,other_PC(5,:),'r')
+X=mean(Thal_PC,3)
+plot(weight,mean(X(5,:)),'b',weight,other_PC(5,:),'r')
 subplot(1,2,2)
 plot(weight,Thal_within(5,:),'b',weight,other_within(5,:),'r')
 

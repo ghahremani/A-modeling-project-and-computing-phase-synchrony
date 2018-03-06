@@ -3,7 +3,7 @@
 clear; clc; 
 addpath('/Users/RChenLab/Documents/TVB_Distribution/demo_scripts/Github/ThalCorProject/BCT/BCT/2017_01_15_BCT')
 Integ_within=[];Rand=-1;
-for Index=1:4
+for Index=1:10
     Rand=Rand+1;
     count_two=0;
     for gain={'0.0', '0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.8', '1','1.5','2.0'}
@@ -153,28 +153,32 @@ title('efficienct_wei')
 figure
 subplot(1,5,1)
 R=mean(Integ_q,3);
-SD=sqrt(var(Integ_q,3));
-plot(weight,R(5,:),'r')
+SD=sqrt(var(Integ_q,0,3));
+errorbar(weight,R(5,:),SD(5,:),'r')
 title('inverse modularity')
 axis([0 2 1.5 6])
 subplot(1,5,2)
 R=mean(Integ_BA,3);
-plot(weight,R(5,:),'r')
+SD=sqrt(var(Integ_BA,0,3));
+errorbar(weight,R(5,:),SD(5,:),'r')
 title('participation coefficient')
 axis([0 2 0.15 0.4])
 subplot(1,5,4)
 R=mean(Ctot_pos,3);
-plot(weight,R(5,:),'r')
+SD=sqrt(var(Ctot_pos,0,3));
+errorbar(weight,R(5,:),SD(5,:),'r')
 title('clustering coefficient')
 axis([0 2 0.05 0.35])
 subplot(1,5,5)
 R=mean(CORR,3);
-plot(weight,R(5,:),'r')
+SD=sqrt(var(CORR,0,3));
+errorbar(weight,R(5,:),SD(5,:),'r')
 title('SC FC correlation')
 axis([0 2 0.34 0.43])
 subplot(1,5,3)
 R=mean(Integ_within,3);
-plot(weight,R(5,:),'r')
+SD=sqrt(var(Integ_within,0,3));
+errorbar(weight,R(5,:),SD(5,:),'r')
 title('Within-module degree')
 
 

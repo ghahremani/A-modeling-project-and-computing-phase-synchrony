@@ -6,10 +6,12 @@ count_two=0;Integ_within=[];
 for gain={'0.0', '0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.8', '1','1.5','2.0'}
     count_two=count_two+1;
     count_one=0;
-    for G={'0.0', '0.1', '0.2', '0.3', '0.4', '0.5'}
+    for G={'0.0', '0.1', '0.2', '0.3', '0.4', '0.5','0.6','0.8','1.0'}
         count_one=count_one+1;
-        Data=load(['FC_LoopGainRandom' char(G) 'Weight' char(gain) '.mat'])
+        Data=load(['FC_LoopGain' char(G) 'Weight' char(gain) '.mat'])
         net=Data.data_struct;
+%         [nRows,nCols] = size(net);
+%         net(1:(nRows+1):nRows*nCols) = 0;
         SC_Data=load('data_struct.mat')
         struct=SC_Data.data_struct;
         % if you want to get rid of negative weights
@@ -90,81 +92,89 @@ for gain={'0.0', '0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.8', '1','1.5','2.0
 
         %% compute correlation between structural and functional data
         CORR(count_one,count_two)=corr(reshape(net,[96*96,1]),reshape(struct,[96*96,1]))
+        
+        %% Newman's modularity
+
+        % gamma is the resolution parameter; gamma=1 classic modularity
+        gamma=1;
+        [Ci Q(count_one,count_two)] = modularity_und(net,gamma);
+
     end
 end
 
 %% This explores SC data and calculates which nodes fall into the same degree match
 %% Degree calculation and find degree matched nodes (falling in Mean+-2SD)
-figure
-[is,os,str] = strengths_dir(struct)
-
-subplot(2,4,2)
-info_plot=str
-hist(info_plot)
-thal.deg=info_plot([41, 42, 43, 89, 90, 91])
-MEAN=mean(thal.deg);
-SD=sqrt(var(thal.deg))
-min(thal.deg)
-max(thal.deg)
-title('strength measure')
-
-hold on
-y=0:0.001:20; % How much is long
-x=ones(size(y))*(MEAN+2*SD);
-plot(x, y, 'r') % but is not large enough
-% Thalamic nodes do not seem to be that high degree
-
-hold on
-y=0:0.001:20; % How much is long
-x=ones(size(y))*(MEAN-2*SD);
-plot(x, y, 'r') % but is not large enough
-[a,deg_matched_indeces]=find((MEAN+2*SD)>str & str>(MEAN-2*SD));
-IND=round(rand(1,6)*length(a))
-Nodes_rand=deg_matched_indeces(IND);
-matched=str(deg_matched_indeces(IND));
+%figure
+% [is,os,str] = strengths_dir(struct)
+% 
+% subplot(2,4,2)
+% info_plot=str
+% hist(info_plot)
+% thal.deg=info_plot([41, 42, 43, 89, 90, 91])
+% MEAN=mean(thal.deg);
+% SD=sqrt(var(thal.deg))
+% min(thal.deg)
+% max(thal.deg)
+% title('strength measure')
+% 
+% hold on
+% y=0:0.001:20; % How much is long
+% x=ones(size(y))*(MEAN+2*SD);
+% plot(x, y, 'r') % but is not large enough
+% % Thalamic nodes do not seem to be that high degree
+% 
+% hold on
+% y=0:0.001:20; % How much is long
+% x=ones(size(y))*(MEAN-2*SD);
+% plot(x, y, 'r') % but is not large enough
+% [a,deg_matched_indeces]=find((MEAN+2*SD)>str & str>(MEAN-2*SD));
+% IND=round(rand(1,6)*length(a))
+% Nodes_rand=deg_matched_indeces(IND);
+% matched=str(deg_matched_indeces(IND));
 %% Plot as a function of global coupling
 weight=[0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.8, 1.0,1.5,2];
-gain=[0.0,0.1,0.2,0.3,0.4,0.5];
+gain=[0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.8,1];
 figure
-subplot(1,6,1)
+subplot(1,5,1)
 imagesc(weight,gain,Integ_q)
 title('inverse modularity')
-subplot(1,6,2)
+subplot(1,5,2)
 imagesc(weight,gain,Integ_BA)
 title('participation coefficient')
-% subplot(1,6,3)
-% imagesc(weight,gain,Integ_within)
-% title('within-module')
-subplot(1,6,4)
+% subplot(1,5,3)
+% Q=Q.^(-1);
+% imagesc(weight,gain,Q)
+% title('Newman modularity')
+subplot(1,5,4)
 imagesc(weight,gain,Ctot_pos)
 title('clustering coefficient')
-subplot(1,6,5)
+subplot(1,5,5)
 imagesc(weight,gain,CORR)
 title('SC FC correlation')
-subplot(1,6,6)
+subplot(1,5,3)
 imagesc(weight,gain,GE)
-title('efficienct_wei')
+title('GE')
 %% Line plot at g=0.4
 figure
 subplot(1,5,1)
 plot(weight,Integ_q(5,:))
 title('inverse modularity')
-axis([0 2 1.5 6])
+%axis([0 2 1.5 6])
 subplot(1,5,2)
 plot(weight,Integ_BA(5,:))
 title('participation coefficient')
-axis([0 2 0.15 0.4])
+%axis([0 2 0.15 0.4])
 subplot(1,5,4)
 plot(weight,Ctot_pos(5,:))
 title('clustering coefficient')
-axis([0 2 0.05 0.35])
+%axis([0 2 0.05 0.35])
 subplot(1,5,5)
 plot(weight,CORR(5,:))
 title('SC FC correlation')
-axis([0 2 0.34 0.43])
+%axis([0 2 0.34 0.43])
 subplot(1,5,3)
-plot(weight,Integ_within(5,:))
-title('Within-module degree')
+plot(weight,GE(5,:))
+title('GE')
 
 
 %% comparing thalamic nodes to other nodes in terms of PC and within-module degree
@@ -176,7 +186,7 @@ plot(weight,Thal_within(5,:),'b',weight,other_within(5,:),'r')
 
 
 %% Degree-matched random nodes
-clear;clc
+% clear;clc
 SC_Data=load('data_struct.mat')
 struct=SC_Data.data_struct;
 [is,os,str] = strengths_dir(struct)
