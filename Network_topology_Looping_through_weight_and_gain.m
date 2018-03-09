@@ -1,6 +1,6 @@
 % Network Topology Heat maps as function of global gain and connection
 % weights
-clear; clc; close all
+clc; close all
 addpath('/Users/RChenLab/Documents/TVB_Distribution/demo_scripts/Github/ThalCorProject/BCT/BCT/2017_01_15_BCT')
 count_two=0;Integ_within=[];
 for gain={'0.0', '0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.8', '1','1.5','2.0'}
@@ -8,7 +8,7 @@ for gain={'0.0', '0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.8', '1','1.5','2.0
     count_one=0;
     for G={'0.0', '0.1', '0.2', '0.3', '0.4', '0.5','0.6','0.8','1.0'}
         count_one=count_one+1;
-        Data=load(['FC_LoopGain' char(G) 'Weight' char(gain) '.mat'])
+        Data=load(['FC_LoopGainModulatingExceptHighPCFrontal' char(G) 'Weight' char(gain) '.mat'])
         net=Data.data_struct;
 %         [nRows,nCols] = size(net);
 %         net(1:(nRows+1):nRows*nCols) = 0;
@@ -159,19 +159,19 @@ figure
 subplot(1,5,1)
 plot(weight,Integ_q(5,:))
 title('inverse modularity')
-%axis([0 2 1.5 6])
+axis([0 2 1.5 6])
 subplot(1,5,2)
 plot(weight,Integ_BA(5,:))
 title('participation coefficient')
-%axis([0 2 0.15 0.4])
+axis([0 2 0.15 0.4])
 subplot(1,5,4)
 plot(weight,Ctot_pos(5,:))
 title('clustering coefficient')
-%axis([0 2 0.05 0.35])
+axis([0 2 0.05 0.35])
 subplot(1,5,5)
 plot(weight,CORR(5,:))
 title('SC FC correlation')
-%axis([0 2 0.34 0.43])
+axis([0 2 0.34 0.43])
 subplot(1,5,3)
 plot(weight,GE(5,:))
 title('GE')
@@ -226,3 +226,4 @@ IND=randi(length(deg_matched_indeces),1,6);
 Nodes_rand(count,:)=deg_matched_indeces(IND);
 matched(count,:)=str(deg_matched_indeces(IND));
 end
+

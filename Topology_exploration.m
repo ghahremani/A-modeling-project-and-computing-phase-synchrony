@@ -1,7 +1,7 @@
 % This file explores the topology of structural connectivity in the 96 parcellation (structural matrix)
 % thalamic nodes are 41, 42, 43, 89, 90, 91
 % Load structural matrix
-clear; clc; 
+clear; clc; close all
 addpath('/Users/RChenLab/Documents/TVB_Distribution/demo_scripts/Github/ThalCorProject/BCT/BCT/2017_01_15_BCT')
 SC_Data=load('data_struct.mat')
 net=SC_Data.data_struct;
@@ -41,7 +41,7 @@ plot(x, y, 'r') % but is not large enough
 [is,os,str] = strengths_dir(net)
 
 subplot(2,4,2)
-info_plot=str
+info_plot=os
 hist(info_plot)
 thal.deg=info_plot([41, 42, 43, 89, 90, 91])
 min(thal.deg)
@@ -135,7 +135,7 @@ tau = 0.1;
 nReps = 10;
 
 for x = 1:500
-    [ci_temp(:,x),q_temp(x,1)] = community_louvain(net,gamma,1:1:nNodes,'negative_asym'); 
+    [ci_temp(:,x),q_temp(x,1)] = community_louvain(net,gamma,1:1:nNodes); 
 end
 
 %estimate a 'consensus' partition (tau and nReps can be altered to change threshold - see https://sites.google.com/site/bctnet/)
@@ -145,7 +145,7 @@ q = nanmean(q_temp);
 
 %% Participation index (BA)  First do the community structure estimation before this step
 BA = zeros(nNodes,1);
-BA = participation_coef_sign(net,ci);
+BA = participation_coef(net,ci,2);
 mean(BA)
 BA([41, 42, 43, 89, 90, 91])
 
@@ -212,7 +212,7 @@ gamma=1;
 [Ci Q] = modularity_und(net,gamma);
 
 %% Rich club 
-[Rw] = rich_club_wu(net);
+[Rw] = rich_club_wd(net);
 
 %% Global efficiency
 L=net.^(-1);  % is this correct?
